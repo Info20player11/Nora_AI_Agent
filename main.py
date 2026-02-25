@@ -16,7 +16,7 @@ class NoraFinanceAI(ctk.CTk):
         super().__init__()
 
         self.title("Nora - AI Finanční Asistentka")
-        self.geometry("1000 dio 800")
+        self.geometry("1000x800")
 
         self.hf_token = self.load_key()
         self.data_context = "" 
@@ -32,11 +32,9 @@ class NoraFinanceAI(ctk.CTk):
         self.logo_label = ctk.CTkLabel(self.sidebar, text="NORA AI", font=ctk.CTkFont(size=24, weight="bold"))
         self.logo_label.pack(pady=(30, 20), padx=20)
 
-        # Sekce Data
         self.import_btn = ctk.CTkButton(self.sidebar, text="Importovat CSV", command=self.import_csv)
         self.import_btn.pack(pady=10, padx=20)
 
-        # Sekce Nastavení (Ukládání klíče)
         self.settings_label = ctk.CTkLabel(self.sidebar, text="Nastavení API", font=ctk.CTkFont(size=14, weight="bold"))
         self.settings_label.pack(pady=(30, 5), padx=20)
         
@@ -66,10 +64,9 @@ class NoraFinanceAI(ctk.CTk):
         self.send_btn = ctk.CTkButton(self.entry_frame, text="Odeslat", width=120, height=50, command=self.send_message)
         self.send_btn.pack(side="right")
 
-        self.add_to_chat("Nora", "Ahoj! Pokud nemáš nastavený HF Token v sidebaru, prosím vlož ho, abych mohla začít pracovat.")
+        self.add_to_chat("Nora", "Ahoj! Jsem tvoje finanční asistentka. Vlož token vlevo a můžeme začít.")
 
     def load_key(self):
-        """Načte API klíč z lokálního JSON souboru."""
         if os.path.exists(CONFIG_FILE):
             with open(CONFIG_FILE, "r") as f:
                 config = json.load(f)
@@ -77,13 +74,12 @@ class NoraFinanceAI(ctk.CTk):
         return ""
 
     def save_key(self):
-        """Uloží API klíč do lokálního JSON souboru."""
         key = self.token_entry.get()
         if key:
             with open(CONFIG_FILE, "w") as f:
                 json.dump({"hf_token": key}, f)
             self.hf_token = key
-            messagebox.showinfo("Nastavení", "Token byl úspěšně uložen lokálně.")
+            messagebox.showinfo("Nastavení", "Token byl úspěšně uložen.")
         else:
             messagebox.showwarning("Varování", "Pole pro token je prázdné.")
 
@@ -94,7 +90,7 @@ class NoraFinanceAI(ctk.CTk):
                 df = pd.read_csv(file_path)
                 self.data_context = df.head(15).to_string(index=False)
                 self.status_label.configure(text="Data: Načtena ✅", text_color="#27ae60")
-                self.add_to_chat("Systém", "Analýza tabulky je připravena.")
+                self.add_to_chat("Systém", "Data z tabulky byla načtena do paměti.")
             except Exception as e:
                 self.add_to_chat("Systém", f"Chyba: {e}")
 
@@ -106,37 +102,37 @@ class NoraFinanceAI(ctk.CTk):
 
     def send_message(self):
         if not self.hf_token:
-            messagebox.showerror("Chyba", "Chybí Hugging Face Token! Vlož ho prosím do nastavení vlevo.")
+            messagebox.showerror("Chyba", "Chybí Hugging Face Token!")
             return
             
         user_text = self.user_input.get()
         if not user_text: return
+        
         self.add_to_chat("Ty", user_text)
         self.user_input.delete(0, "end")
+        
+        # Klíčová oprava: Metoda musí být definována uvnitř třídy!
         self.get_hf_response(user_text)
 
     def get_hf_response(self, prompt):
         try:
-            client = InferenceClient("mistralai/Mistral-7B-Instruct-v0.3", token=self.hf_token)
-            system_prompt = "Jsi Nora, česká finanční asistentka. Odpovídej stručně."
+            # Používáme stabilní Zephyr model
+            client = InferenceClient("HuggingFaceH4/zephyr-7b-beta", token=self.hf_token)
             
-            full_prompt = f"{system_prompt}\n"
+            messages = [{"role": "system", "content": "Jsi Nora, česká finanční asistentka. Odpovídej česky a k věci."}]
             if self.data_context:
-                full_prompt += f"Data uživatele:\n{self.data_context}\n"
-            full_prompt += f"Uživatel: {prompt}\nNora:"
+                messages.append({"role": "system", "content": f"Uživatel nahrál tato data: {self.data_context}"})
+            messages.append({"role": "user", "content": prompt})
 
             response = ""
-            for message in client.chat_completion(
-                messages=[{"role": "user", "content": full_prompt}],
-                max_tokens=500,
-                stream=True
-            ):
+            for message in client.chat_completion(messages=messages, max_tokens=500, stream=True):
                 token = message.choices[0].delta.content
-                response += token
+                if token:
+                    response += token
 
             self.add_to_chat("Nora", response.strip())
         except Exception as e:
-            self.add_to_chat("Nora", f"Chyba při komunikaci: {e}")
+            self.add_to_chat("Nora", f"Chyba: {e}")
 
 if __name__ == "__main__":
     app = NoraFinanceAI()
