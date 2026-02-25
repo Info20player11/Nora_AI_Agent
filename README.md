@@ -23,6 +23,7 @@ Aby Nora fungovala, budete potřebovat Python 3.9+ a nainstalovat následující
 
 ```bash
 pip install pandas customtkinter matplotlib fpdf2 huggingface_hub
+```
 
 # 🔑 Nastavení API
 Nora vyžaduje Hugging Face Access Token (zdarma):
