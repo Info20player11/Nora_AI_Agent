@@ -49,9 +49,10 @@ Vytvořte report: Napište do chatu "Udělej mi report" nebo "Generuj PDF". Nora
 
 # 🏗️ Architektura projektu
 
-Komponenta,Technologie
-GUI,CustomTkinter
-AI Model,Gemma 2 (9B) via HF Inference
-Zpracování dat,Pandas
-Vizualizace,Matplotlib
-Export,FPDF2
+| Komponent  | Technologie |
+| ------------- | ------------- |
+| GUI  | CustomTkinter  |
+| AI Model  | Gemma 2 (9B) via HF Inference  |
+| Zpracování dat  | Pandas  |
+| Vizualizace  | Matplotlib  |
+| Export  | FPDF2  |
