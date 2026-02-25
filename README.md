@@ -36,3 +36,22 @@ Klikněte na Uložit Nastavení (token se uloží lokálně do config.json).
 
 📈 Jak Noru používat
 Importujte data: Použijte CSV soubor v následujícím formátu (oddělený čárkou):
+
+```
+Datum,Kategorie,Polozka,Castka,Typ
+2024-05-01,Prijem,Vyplata,45000,Prijem
+2024-05-02,Byt,Najem,-15000,Vydaj
+```
+
+Ptejte se: Např. "Kolik mi zbude, když si koupím nový telefon za 10 000 Kč?"
+
+Vytvořte report: Napište do chatu "Udělej mi report" nebo "Generuj PDF". Nora okamžitě vytvoří soubor Report_DATUM.pdf ve vaší složce.
+
+# 🏗️ Architektura projektu
+
+Komponenta,Technologie
+GUI,CustomTkinter
+AI Model,Gemma 2 (9B) via HF Inference
+Zpracování dat,Pandas
+Vizualizace,Matplotlib
+Export,FPDF2
