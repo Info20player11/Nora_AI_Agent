@@ -56,3 +56,10 @@ Vytvořte report: Napište do chatu "Udělej mi report" nebo "Generuj PDF". Nora
 | `Zpracování dat`  | Pandas  |
 | `Vizualizace`  | Matplotlib  |
 | `Export`  | FPDF2  |
+
+
+> [!WARNING]
+># 🔒 Bezpečnost
+>Vaše data i API klíče zůstávají u vás. Soubor config.json, dočasné grafy a vygenerované PDF reporty jsou automaticky ignorovány Gitem, aby se předešlo jejich nechtěnému nahrání na veřejný server.
+
+*Vyvinuto jako open-source finanční asistent. Pokud se vám Nora líbí, dejte projektu ⭐!*
